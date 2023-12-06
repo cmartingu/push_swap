@@ -97,3 +97,36 @@ void	rr(t_list **stackA, t_list **stackB)
 	*stackB = aux;
 	write(1, "rr\n", 3);
 }
+
+void	rra(t_list **stackA)
+{
+	t_list	*aux;
+
+	aux = ft_lstnew(ft_lstlast(*stackA)->content);
+	ft_lstadd_front(&(*stackA), aux);
+	free(ft_lstlast(*stackA));
+	write(1, "rra\n", 4);
+}
+
+void	rrb(t_list **stackB)
+{
+	t_list	*aux;
+
+	aux = ft_lstnew(ft_lstlast(*stackB)->content);
+	ft_lstadd_front(&(*stackB), aux);
+	free(ft_lstlast(*stackB));
+	write(1, "rrb\n", 4);
+}
+
+void	rrr(t_list **stackA, t_list **stackB)
+{
+	t_list	*aux;
+
+	aux = ft_lstnew(ft_lstlast(*stackA)->content);
+	ft_lstadd_front(&(*stackA), aux);
+	free(ft_lstlast(*stackA));
+	aux = ft_lstnew(ft_lstlast(*stackB)->content);
+	ft_lstadd_front(&(*stackB), aux);
+	free(ft_lstlast(*stackB));
+	write(1, "rrr\n", 4);
+}
