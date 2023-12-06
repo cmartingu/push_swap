@@ -24,4 +24,16 @@ typedef struct s_list
 	struct s_list	*next;
 }					t_list;
 
+t_list	*parse_args(int argc, char *argv[]);
+t_list	*ft_lstnew(int content);
+int		has_repeat(t_list *list);
+void	free_struct(t_list *list);
+void	error_list(int error);
+void	ft_lstadd_back(t_list **lst, t_list *new);
+void	sa(t_list *stackA);
+void	sb(t_list *stackB);
+void	ss(t_list *stackA, t_list *stackB);
+void	pa(t_list **stackA, t_list **stackB);
+void	ft_lstadd_front(t_list **lst, t_list *new);
+
 #endif
