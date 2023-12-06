@@ -48,3 +48,52 @@ void	pa(t_list **stackA, t_list **stackB)
 	free(*stackB);
 	*stackB = aux;
 }
+
+void	pb(t_list **stackB, t_list **stackA)
+{
+	t_list	*aux;
+
+	aux = ft_lstnew((*stackA)->content);
+	ft_lstadd_front(&(*stackB), aux);
+	aux = (*stackA)->next;
+	free(*stackA);
+	*stackA = aux;
+	write(1, "pb\n", 3);
+}
+
+void	ra(t_list **stackA)
+{
+	t_list	*aux;
+
+	ft_lstadd_back(&(*stackA), ft_lstnew((*stackA)->content));
+	aux = (*stackA)->next;
+	free(*stackA);
+	*stackA = aux;
+	write(1, "ra\n", 3);
+}
+
+void	rb(t_list **stackB)
+{
+	t_list	*aux;
+
+	ft_lstadd_back(&(*stackB), ft_lstnew((*stackB)->content));
+	aux = (*stackB)->next;
+	free(*stackB);
+	*stackB = aux;
+	write(1, "rb\n", 3);
+}
+
+void	rr(t_list **stackA, t_list **stackB)
+{
+	t_list	*aux;
+
+	ft_lstadd_back(&(*stackA), ft_lstnew((*stackA)->content));
+	aux = (*stackA)->next;
+	free(*stackA);
+	*stackA = aux;
+	ft_lstadd_back(&(*stackB), ft_lstnew((*stackB)->content));
+	aux = (*stackB)->next;
+	free(*stackB);
+	*stackB = aux;
+	write(1, "rr\n", 3);
+}
