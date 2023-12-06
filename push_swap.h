@@ -35,5 +35,9 @@ void	sb(t_list *stackB);
 void	ss(t_list *stackA, t_list *stackB);
 void	pa(t_list **stackA, t_list **stackB);
 void	ft_lstadd_front(t_list **lst, t_list *new);
+void	pb(t_list **stackB, t_list **stackA);
+void	ra(t_list **stackA);
+void	rb(t_list **stackB);
+void	rr(t_list **stackA, t_list **stackB);
 
 #endif
