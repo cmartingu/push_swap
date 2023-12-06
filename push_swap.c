@@ -12,6 +12,20 @@
 
 #include "push_swap.h"
 
+t_list	*ft_lstlast(t_list *lst)
+{
+	t_list	*sol;
+
+	sol = lst;
+	if (sol == NULL)
+		return (NULL);
+	while (sol->next != NULL)
+	{
+		sol = sol->next;
+	}
+	return (sol);
+}
+
 t_list	*ft_lstnew(int content)
 {
 	t_list	*sol;
