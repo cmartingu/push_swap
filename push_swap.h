@@ -39,5 +39,8 @@ void	pb(t_list **stackB, t_list **stackA);
 void	ra(t_list **stackA);
 void	rb(t_list **stackB);
 void	rr(t_list **stackA, t_list **stackB);
+void	rra(t_list **stackA);
+void	rrb(t_list **stackB);
+void	rrr(t_list **stackA, t_list **stackB);
 
 #endif
