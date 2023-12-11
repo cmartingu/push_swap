@@ -44,9 +44,18 @@ void	pa(t_list **stackA, t_list **stackB)
 
 	aux = ft_lstnew((*stackB)->content);
 	ft_lstadd_front(&(*stackA), aux);
-	aux = (*stackB)->next;
-	free(*stackB);
-	*stackB = aux;
+	if ((*stackB)->next)
+	{
+		aux = (*stackB)->next;
+		free(*stackB);
+		*stackB = aux;
+	}
+	else
+	{
+		free(*stackB);
+		*stackB = NULL;
+	}
+	write(1, "pa\n", 3);
 }
 
 void	pb(t_list **stackB, t_list **stackA)
