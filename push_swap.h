@@ -26,6 +26,7 @@ typedef struct s_list
 
 t_list	*parse_args(int argc, char *argv[]);
 t_list	*ft_lstnew(int content);
+t_list	*ft_lstlast(t_list *lst);
 int		has_repeat(t_list *list);
 void	free_struct(t_list *list);
 void	error_list(int error);
@@ -42,5 +43,9 @@ void	rr(t_list **stackA, t_list **stackB);
 void	rra(t_list **stackA);
 void	rrb(t_list **stackB);
 void	rrr(t_list **stackA, t_list **stackB);
+void    try_check(t_list **stackA);
+int		check(t_list *stackA, t_list *stackB);
+void	pick_place(int nb, t_list **stackA, t_list **stackB);
+void	pick_lower_high(int nb, t_list **stackA, t_list **stackB);
 
 #endif
