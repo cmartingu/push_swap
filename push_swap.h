@@ -20,18 +20,21 @@
 
 typedef struct s_list
 {
-	int				content;
+	int				num;
+	int				ideal_pos;
 	struct s_list	*next;
 }					t_list;
 
 t_list	*parse_args(int argc, char *argv[]);
-t_list	*ft_lstnew(int content);
+t_list	*ft_lstnew(int nb, int position);
 t_list	*ft_lstlast(t_list *lst);
-int		has_repeat(t_list *list);
+int	has_repeat(t_list *list);
+int	check(t_list *stackA, t_list *stackB);
+int	ft_lstsize(t_list *lst);
 void	free_struct(t_list *list);
 void	error_list(int error);
 void	ft_lstadd_back(t_list **lst, t_list *new);
-void	sa(t_list *stackA);
+void	sa(t_list **stackA);
 void	sb(t_list *stackB);
 void	ss(t_list *stackA, t_list *stackB);
 void	pa(t_list **stackA, t_list **stackB);
@@ -43,9 +46,11 @@ void	rr(t_list **stackA, t_list **stackB);
 void	rra(t_list **stackA);
 void	rrb(t_list **stackB);
 void	rrr(t_list **stackA, t_list **stackB);
-void    try_check(t_list **stackA);
+void	pick_positions(t_list **stackA);
 int		check(t_list *stackA, t_list *stackB);
 void	pick_place(int nb, t_list **stackA, t_list **stackB);
-void	pick_lower_high(int nb, t_list **stackA, t_list **stackB);
+void    try_check(t_list **stackA);
+void	higher_in_stack(t_list **stackA, t_list **stackB);
+int		less_movs(t_list **stackB);
 
 #endif
