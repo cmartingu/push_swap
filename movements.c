@@ -12,13 +12,17 @@
 
 #include "push_swap.h"
 
-void	sa(t_list *stackA)
+void	sa(t_list **stackA)
 {
 	int	aux;
+	int	aux_pos;
 
-	aux = stackA->content;
-	stackA->content = (stackA->next)->content;
-	(stackA->next)->content = aux;
+	aux = (*stackA)->num;
+	aux_pos = (*stackA)->ideal_pos;
+	(*stackA)->num = ((*stackA)->next)->num;
+	(*stackA)->ideal_pos = ((*stackA)->next)->ideal_pos;
+	((*stackA)->next)->num = aux;
+	((*stackA)->next)->ideal_pos = aux_pos;
 	write(1, "sa\n", 3);
 }
 
@@ -26,23 +30,30 @@ void	sb(t_list *stackB)
 {
 	int	aux;
 
-	aux = stackB->content;
-	stackB->content = (stackB->next)->content;
-	(stackB->next)->content = aux;
+	aux = stackB->num;
+	stackB->num = (stackB->next)->num;
+	(stackB->next)->num = aux;
 	write(1, "sb\n", 3);
 }
 
 void	ss(t_list *stackA, t_list *stackB)
 {
-	sa(stackA);
-	sb(stackB);
+	int	aux;
+
+	aux = stackA->num;
+	stackA->num = (stackA->next)->num;
+	(stackA->next)->num = aux;
+	aux = stackB->num;
+	stackB->num = (stackB->next)->num;
+	(stackB->next)->num = aux;
+	write(1, "ss\n", 3);
 }
 
 void	pa(t_list **stackA, t_list **stackB)
 {
 	t_list	*aux;
 
-	aux = ft_lstnew((*stackB)->content);
+	aux = ft_lstnew((*stackB)->num, (*stackB)->ideal_pos);
 	ft_lstadd_front(&(*stackA), aux);
 	if ((*stackB)->next)
 	{
@@ -62,11 +73,19 @@ void	pb(t_list **stackB, t_list **stackA)
 {
 	t_list	*aux;
 
-	aux = ft_lstnew((*stackA)->content);
+	aux = ft_lstnew((*stackA)->num, (*stackA)->ideal_pos);
 	ft_lstadd_front(&(*stackB), aux);
-	aux = (*stackA)->next;
-	free(*stackA);
-	*stackA = aux;
+	if ((*stackA)->next)
+	{
+		aux = (*stackA)->next;
+		free(*stackA);
+		*stackA = aux;
+	}
+	else
+	{
+		free(*stackA);
+		*stackA = NULL;
+	}
 	write(1, "pb\n", 3);
 }
 
@@ -74,7 +93,7 @@ void	ra(t_list **stackA)
 {
 	t_list	*aux;
 
-	ft_lstadd_back(&(*stackA), ft_lstnew((*stackA)->content));
+	ft_lstadd_back(&(*stackA), ft_lstnew((*stackA)->num, (*stackA)->ideal_pos));
 	aux = (*stackA)->next;
 	free(*stackA);
 	*stackA = aux;
@@ -85,7 +104,7 @@ void	rb(t_list **stackB)
 {
 	t_list	*aux;
 
-	ft_lstadd_back(&(*stackB), ft_lstnew((*stackB)->content));
+	ft_lstadd_back(&(*stackB), ft_lstnew((*stackB)->num, (*stackB)->ideal_pos));
 	aux = (*stackB)->next;
 	free(*stackB);
 	*stackB = aux;
@@ -96,11 +115,11 @@ void	rr(t_list **stackA, t_list **stackB)
 {
 	t_list	*aux;
 
-	ft_lstadd_back(&(*stackA), ft_lstnew((*stackA)->content));
+	ft_lstadd_back(&(*stackA), ft_lstnew((*stackA)->num, (*stackA)->ideal_pos));
 	aux = (*stackA)->next;
 	free(*stackA);
 	*stackA = aux;
-	ft_lstadd_back(&(*stackB), ft_lstnew((*stackB)->content));
+	ft_lstadd_back(&(*stackB), ft_lstnew((*stackB)->num, (*stackB)->ideal_pos));
 	aux = (*stackB)->next;
 	free(*stackB);
 	*stackB = aux;
@@ -110,32 +129,45 @@ void	rr(t_list **stackA, t_list **stackB)
 void	rra(t_list **stackA)
 {
 	t_list	*aux;
+	t_list	*aux2;
 
-	aux = ft_lstnew(ft_lstlast(*stackA)->content);
+	aux2 = ft_lstlast(*stackA);
+	aux = ft_lstnew(aux2->num, aux2->ideal_pos);
 	ft_lstadd_front(&(*stackA), aux);
-	free(ft_lstlast(*stackA));
+	while (aux->next != aux2)
+		aux =  aux->next;
+	free(aux2);
+	aux->next = NULL;
 	write(1, "rra\n", 4);
 }
 
 void	rrb(t_list **stackB)
 {
 	t_list	*aux;
+	t_list	*aux2;
 
-	aux = ft_lstnew(ft_lstlast(*stackB)->content);
+	aux2 = ft_lstlast(*stackB);
+	aux = ft_lstnew(aux2->num, aux2->ideal_pos);
 	ft_lstadd_front(&(*stackB), aux);
-	free(ft_lstlast(*stackB));
+	while (aux->next != aux2)
+		aux = aux->next;
+	free(aux2);
+	aux->next = NULL;
 	write(1, "rrb\n", 4);
 }
 
 void	rrr(t_list **stackA, t_list **stackB)
 {
 	t_list	*aux;
+	t_list	*aux2;
 
-	aux = ft_lstnew(ft_lstlast(*stackA)->content);
+	aux2 = ft_lstlast(*stackA);
+	aux = ft_lstnew(aux2->num, aux2->ideal_pos);
 	ft_lstadd_front(&(*stackA), aux);
-	free(ft_lstlast(*stackA));
-	aux = ft_lstnew(ft_lstlast(*stackB)->content);
+	free(aux2);
+	aux2 = ft_lstlast(*stackB);
+	aux = ft_lstnew(aux2->num, aux2->ideal_pos);
 	ft_lstadd_front(&(*stackB), aux);
-	free(ft_lstlast(*stackB));
+	free(aux2);
 	write(1, "rrr\n", 4);
 }
