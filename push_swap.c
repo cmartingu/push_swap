@@ -20,22 +20,34 @@ t_list	*ft_lstlast(t_list *lst)
 	if (sol == NULL)
 		return (NULL);
 	while (sol->next != NULL)
-	{
 		sol = sol->next;
-	}
 	return (sol);
 }
 
-t_list	*ft_lstnew(int content)
+t_list	*ft_lstnew(int nb, int position)
 {
 	t_list	*sol;
 
 	sol = malloc(sizeof(t_list));
 	if (!sol)
 		return (NULL);
-	sol->content = content;
+	sol->num = nb;
+	sol->ideal_pos = position;
 	sol->next = NULL;
 	return (sol);
+}
+
+int	ft_lstsize(t_list *lst)
+{
+	int	cont;
+
+	cont = 0;
+	while (lst)
+	{
+		cont++;
+		lst = lst->next;
+	}
+	return (cont);
 }
 
 void	ft_lstadd_back(t_list **lst, t_list *new)
@@ -61,20 +73,20 @@ void	ft_lstadd_front(t_list **lst, t_list *new)
 
 int	main(int argc, char *argv[])
 {
-	int 	i;
 	t_list	*stackA;
-	t_list	*aux;
+	//t_list	*aux;
 
 	if (argc <= 1)
 		return (error_list(1), 0);
 	stackA = parse_args(argc, argv);
 	if (check(stackA, NULL) == 1)
 		return (0);
+	pick_positions(&stackA);
 	try_check(&stackA);
-	printf("\n\nStack A:\n");
+	/*printf("\n\nStack A:\n");
 	while (stackA)
 	{
-		printf("%d\n", stackA->content);
+		printf("%d\n", stackA->num);
 		if (stackA->next)
 		{
 			aux = stackA->next;
@@ -83,6 +95,6 @@ int	main(int argc, char *argv[])
 		}
 		else
 			stackA = NULL;
-	}
+	}*/
 	return (0);
 }
