@@ -12,48 +12,160 @@
 
 #include "push_swap.h"
 
-int	check(t_list *stackA, t_list *stackB)
+void	pick_positions(t_list **stackA)
 {
 	t_list	*aux;
-	int		nb;
+	t_list	*min_pos;
+	int		pos;
 
-	if (stackB != NULL)
-		return (-1);
-	aux = stackA;
-	nb = aux->content;
-	if (aux->next)
-		aux = aux->next;
+	pos = 1;
+	while (pos <= ft_lstsize(*stackA))
+	{
+		aux = *stackA;
+		min_pos = *stackA;
+		while (min_pos->ideal_pos != 0)
+			min_pos = min_pos->next;
+		while (aux != NULL)
+		{
+			if (aux->ideal_pos == 0 && aux->num < min_pos->num)
+				min_pos = aux;
+			aux = aux->next;
+		}
+		min_pos->ideal_pos = pos;
+		pos++;
+	}
+}
+void	higher_in_stack(t_list **stackA, t_list **stackB)
+{
+	int		nb;
+	t_list	*aux;
+	int		pos;
+
+	aux = *stackB;
+	nb = 0;
 	while (aux != NULL)
 	{
-		if (aux->content < nb)
-			return (-1);
-		nb = aux->content;
+		if (aux->ideal_pos > nb)
+			nb = aux->ideal_pos;
 		aux = aux->next;
 	}
-	return (1);
+	aux = *stackB;
+	pos = 0;
+	while (aux != NULL)
+	{
+		if (aux->ideal_pos == nb)
+			break ;
+		pos++;
+		aux = aux->next;
+	}
+	if (pos > (ft_lstsize(*stackB) - pos))
+	{
+		pos = ft_lstsize(*stackB) - pos;
+		while (pos--)
+			rrb(&*stackB);
+	}
+	else
+	{
+		while (pos--)
+			rb(&*stackB);
+	}
+	pb(&*stackB, &*stackA);
 }
 
-void	pick_lower_high(int nb, t_list **stackA, t_list **stackB)
+int	higher_in_stack_aux(t_list **stackB)
+{
+	int		nb;
+	t_list	*aux;
+	int		pos;
+
+	aux = *stackB;
+	nb = 0;
+	while (aux != NULL)
+	{
+		if (aux->ideal_pos > nb)
+			nb = aux->ideal_pos;
+		aux = aux->next;
+	}
+	aux = *stackB;
+	pos = 0;
+	while (aux != NULL)
+	{
+		if (aux->ideal_pos == nb)
+			break ;
+		pos++;
+		aux = aux->next;
+	}
+	if (pos > (ft_lstsize(*stackB) - pos))
+		pos = ft_lstsize(*stackB) - pos;
+	return (pos);
+}
+
+int	cost_movs(int nb, t_list **stackB)
 {
 	t_list	*aux;
 	int		pos;
 	int		nb_aux;
+	int		found;
 
 	aux = *stackB;
 	pos = 0;
 	nb_aux = 0;
-	while (aux != NULL)
+	found = 0;
+	while (aux != NULL && found == 0)
 	{
-		if (aux->content < nb && aux->content > nb_aux)
+		if (aux->ideal_pos > nb)
 		{
-			pos++;
-			nb_aux = aux->content;
+			nb_aux = aux->ideal_pos;
+			found = 1;
 		}
+		pos++;
 		aux = aux->next;
 	}
-	while (pos--)
-		rb(&*stackB);
-	pb(&*stackB, &*stackA);
+	if (nb_aux == 0)
+		return (higher_in_stack_aux(&(*stackB)));
+	found = 0;
+	while (aux != NULL && found == 0)
+	{
+		if (aux->ideal_pos > nb && aux->ideal_pos < nb_aux)
+		{
+			pos++;
+			nb_aux = aux->ideal_pos;
+			aux = aux->next;
+		}
+		else
+			found = 1;
+	}
+	if (pos > (ft_lstsize(*stackB) - pos))
+		pos = ft_lstsize(*stackB) - pos;
+	return (pos);
+}
+
+int	less_movs(t_list **stackB)
+{
+	int		nb;
+	t_list	*aux;
+	int		pos;
+
+	aux = *stackB;
+	nb = 0;
+	while (aux != NULL)
+	{
+		if (aux->ideal_pos > nb)
+			nb = aux->ideal_pos;
+		aux = aux->next;
+	}
+	aux = *stackB;
+	pos = 0;
+	while (aux != NULL)
+	{
+		if (aux->ideal_pos == nb)
+			break ;
+		pos++;
+		aux = aux->next;
+	}
+	if (pos > (ft_lstsize(*stackB) - pos)) // hacerr rrb
+		return (1);
+	return (2); // hacer rb
 }
 
 void	pick_place(int nb, t_list **stackA, t_list **stackB)
@@ -69,71 +181,74 @@ void	pick_place(int nb, t_list **stackA, t_list **stackB)
 	found = 0;
 	while (aux != NULL && found == 0)
 	{
-		if (aux->content > nb)
+		if (aux->ideal_pos > nb)
 		{
-			nb_aux = aux->content;
+			nb_aux = aux->ideal_pos;
 			found = 1;
 		}
-		if (found == 0)
-		{
-			pos++;
-			aux = aux->next;
-		}
+		pos++;
+		aux = aux->next;
 	}
 	if (nb_aux == 0)
 	{
-		pick_lower_high(nb, &(*stackA), &(*stackB));
+		higher_in_stack(&(*stackA), &(*stackB));
 		return ;
 	}
-	while (aux != NULL)
+	found = 0;
+	while (aux != NULL && found == 0)
 	{
-		if (aux->content > nb && aux->content < nb_aux)
+		if (aux->ideal_pos > nb && aux->ideal_pos < nb_aux)
 		{
 			pos++;
-			nb_aux = aux->content;
+			nb_aux = aux->ideal_pos;
+			aux = aux->next;
 		}
-		aux = aux->next;
+		else
+			found = 1;
 	}
-	while (pos--)
-		rb(&*stackB);
+	if (pos > (ft_lstsize(*stackB) - pos))
+	{
+		pos = ft_lstsize(*stackB) - pos;
+		while (pos--)
+			rrb(&*stackB);
+	}
+	else
+	{
+		while (pos--)
+			rb(&*stackB);
+	}
 	pb(&*stackB, &*stackA);
 }
 
-void    try_check(t_list **stackA)// stack numerado en posición ideal
+void    try_check(t_list **stackA)
 {
 	t_list	*stackB;
-	int		ordered;
 
-	stackB = ft_lstnew(0);
-	ordered = 1;
-	while ((*stackA)->content == ordered)
-	{
-		ra(&*stackA);
-		ordered++;
-	} // Aqui ya he bajado todos los que de primeras estén ordenados, el siguiente, si queda, si o si  está desordenado
-	if (check(*stackA, stackB) == 1)
-		return ;
+	stackB = ft_lstnew(0, 0);
 	pb(&stackB, &*stackA);
-	free(ft_lstlast(stackB));//Tengo el primer número que no iba ordenado del stackA en el B
+	free(ft_lstlast(stackB));
 	stackB->next = NULL;
-	while (check(*stackA, stackB) != 1 && ordered <= (*stackA)->content)
+	while (*stackA)
 	{
-		if ((*stackA)->content == ordered)
+		if ((*stackA)->next)
 		{
-			ra(&*stackA);
-			ordered++;
+			if (cost_movs(((*stackA)->next)->ideal_pos, &stackB) < cost_movs((*stackA)->ideal_pos, &stackB) && cost_movs(((*stackA)->next)->ideal_pos, &stackB) < cost_movs((ft_lstlast(*stackA))->ideal_pos, &stackB))
+				sa(&*stackA);
+			else  if (cost_movs((ft_lstlast(*stackA))->ideal_pos, &stackB) < cost_movs((*stackA)->ideal_pos, &stackB) && cost_movs((ft_lstlast(*stackA))->ideal_pos, &stackB) < cost_movs(((*stackA)->next)->ideal_pos, &stackB))
+				rra(&*stackA);
 		}
-		else
-			pick_place((*stackA)->content, &(*stackA), &stackB);
-	}//una vez salga de aquí o se ha ordenado de una o se han quedado unos ordenados en A y unos ordenados en B
-	//2 opciones: 1-> Buscar el ordered en el stackB e ir haciendo pa() ra() 
-	//			  2-> Buscar el máximo e ir empujándolo en orden(9, 8, 7...) hasta que no haya en el stackB y ya solo quedaría hacer
-	//				  ra() o rra() hasta tener el stackA ordenado
-	while (stackB->content != ordered)
-		rb(&stackB);
-	while (check(*stackA, stackB) != 1 && stackB != NULL)
-	{
-		pa(&(*stackA), &stackB);
-		ra(&(*stackA));
+		pick_place((*stackA)->ideal_pos, &(*stackA), &stackB);
 	}
+	if (less_movs(&stackB) == 1)
+	{
+		while (stackB->ideal_pos != ft_lstsize(stackB))
+			rrb(&stackB);
+	}
+	else
+	{
+		while (stackB->ideal_pos != ft_lstsize(stackB))
+			rb(&stackB);
+	}
+	while (check(*stackA, stackB) != 1 && stackB != NULL)
+		pa(&(*stackA), &stackB);
 }
