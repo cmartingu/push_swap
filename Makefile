@@ -10,19 +10,17 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-NAME = push_swap.a
+NAME = push_swap
 
 MONDONGO = push_swap.c movements.c errors.c try.c
 OBJECTS = $(MONDONGO:.c=.o)
 
 CFLAGS = -Wall -Werror -Wextra
 
-INCLUDE = push_swap.h
-
 all: $(NAME)
 
-$(NAME): $(OBJECTS) $(INCLUDE)
-	ar -crs $(NAME) $(OBJECTS)
+$(NAME): $(OBJECTS)
+	$(CC) $(OBJECTS) $(CFLAGS) -o $(NAME)
 
 clean:
 	rm -f $(OBJECTS)
