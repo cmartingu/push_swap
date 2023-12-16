@@ -12,25 +12,39 @@
 
 #include "push_swap.h"
 
-void	error_list(int error)
-{
-	if (error == 0)
-		write(1, "Error, invalid arguments", 24);
-	else if (error == 1)
-		write(1, "Error, no arguments entered", 27);
-	else if (error == 2)
-		write(1, "Error, repeated arguments", 25);
-}
-
 void	free_struct(t_list *list)
 {
-	t_list *aux;
+	t_list	*aux;
 
 	while (list)
 	{
 		aux = list->next;
 		free(list);
 		list = aux;
+	}
+}
+
+void	pick_positions(t_list **stackA)
+{
+	t_list	*aux;
+	t_list	*min_pos;
+	int		pos;
+
+	pos = 1;
+	while (pos <= ft_lstsize(*stackA))
+	{
+		aux = *stackA;
+		min_pos = *stackA;
+		while (min_pos->ideal_pos != 0)
+			min_pos = min_pos->next;
+		while (aux != NULL)
+		{
+			if (aux->ideal_pos == 0 && aux->num < min_pos->num)
+				min_pos = aux;
+			aux = aux->next;
+		}
+		min_pos->ideal_pos = pos;
+		pos++;
 	}
 }
 
@@ -43,7 +57,7 @@ int	has_repeat(t_list *list)
 		aux = list->next;
 		while (aux)
 		{
-			if (list->content == aux->content)
+			if (list->num == aux->num)
 				return (-1);
 			aux = aux->next;
 		}
@@ -52,42 +66,50 @@ int	has_repeat(t_list *list)
 	return (1);
 }
 
-t_list	*parse_args(int argc, char *argv[])
+int	check(t_list *stackA, t_list *stackB)
 {
-	t_list	*list;
 	t_list	*aux;
-	int		num;
-	int		i;
-	int		j;
+	int		prev;
 
-	i = 1;
-	list = ft_lstnew(0);
-	while (argv[i])
+	if (stackB != NULL)
+		return (-1);
+	aux = stackA;
+	prev = aux->num;
+	while (aux)
 	{
-		j = 0;
-		while (*(argv[i] + j))
-		{
-			if (*(argv[i] + j) >= '0' && *(argv[i] + j) <= '9')
-			{
-				num = 0 + (int){(*(argv[i] + j)) - '0'};
-				j++;
-				while (*(argv[i] + j) && *(argv[i] + j) >= '0' && *(argv[i] + j) <= '9')
-				{
-					num = (num * 10) + (int){(*(argv[i] + j)) - '0'};
-					j++;
-				}
-				ft_lstadd_back(&list, ft_lstnew(num));
-			}
-			else if (*(argv[i] + j) == ' ')
-				j++;
-			else
-				return (free_struct(list),error_list(0), NULL);
-		}
-		i++;
+		if (aux->num < prev)
+			return (-1);
+		prev = aux->num;
+		aux = aux->next;
 	}
-	aux = list->next;
-	free(list);
-	if (has_repeat(aux) == -1)
-		return (error_list(2), free_struct(aux), NULL);
-	return (aux);
+	return (1);
+}
+
+t_list	*new_num(char *argv[], int *i, int *j, t_list	**list)
+{
+	int		negativo;
+	long	num;
+
+	negativo = 0;
+	if (*(argv[*i] + (*j)) == '-')
+	{
+		negativo = 1;
+		(*j)++;
+	}
+	num = 0 + (long){(*(argv[*i] + (*j))) - '0'};
+	(*j)++;
+	while (*(argv[*i] + (*j)) && *(argv[*i] + (*j)) >= '0' && \
+		*(argv[*i] + (*j)) <= '9')
+	{
+		num = (num * 10) + (long){(*(argv[*i] + (*j))) - '0'};
+		(*j)++;
+	}
+	if ((*(argv[*i] + (*j)) != ' ' && *(argv[*i] + (*j)) != '\0') || \
+		(num > 2147483647))
+		return (free_struct(*list), write (2, "Error\n", 6), NULL);
+	if (negativo == 1)
+		num *= -1;
+	if (num < -2147483648)
+		return (free_struct(*list), write (2, "Error\n", 6), NULL);
+	return (ft_lstadd_back(&*list, ft_lstnew(num, 0)), *list);
 }
