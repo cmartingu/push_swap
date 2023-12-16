@@ -12,7 +12,7 @@
 
 NAME = push_swap
 
-MONDONGO = push_swap.c movements.c errors.c try.c
+MONDONGO = push_swap.c movements1.c errors.c try.c three_case.c list_functions.c movements2.c aux_functions.c
 OBJECTS = $(MONDONGO:.c=.o)
 
 CFLAGS = -Wall -Werror -Wextra
